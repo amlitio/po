@@ -1,1 +1,67 @@
+<% layout('layout') %>
 
+<h1 class="h4 mb-3">Admin: PO Requests</h1>
+<p class="text-muted">
+  Use this page to review, approve, or reject PO requests. Share the approved PO number with AP and the vendor.
+</p>
+
+<div class="table-responsive">
+  <table class="table table-sm align-middle table-striped">
+    <thead>
+      <tr>
+        <th>PO #</th>
+        <th>Requested By</th>
+        <th>Division</th>
+        <th>Vendor</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Created</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (!requests || requests.length === 0) { %>
+        <tr>
+          <td colspan="8" class="text-center text-muted">
+            No PO requests yet.
+          </td>
+        </tr>
+      <% } else { %>
+        <% requests.forEach(function(po) { %>
+          <tr>
+            <td><code><%= po.poNumber %></code></td>
+            <td>
+              <div><%= po.requesterName %></div>
+              <% if (po.requesterEmail) { %>
+                <div class="text-muted small"><%= po.requesterEmail %></div>
+              <% } %>
+            </td>
+            <td><%= po.division %></td>
+            <td><%= po.vendorName %></td>
+            <td><%= formatCurrency(po.amount) %></td>
+            <td>
+              <% if (po.status === 'APPROVED') { %>
+                <span class="badge bg-success">APPROVED</span>
+              <% } else if (po.status === 'REJECTED') { %>
+                <span class="badge bg-danger">REJECTED</span>
+              <% } else { %>
+                <span class="badge bg-warning text-dark">PENDING</span>
+              <% } %>
+            </td>
+            <td class="small text-muted"><%= po.createdAt %></td>
+            <td>
+              <div class="d-flex gap-1">
+                <form method="POST" action="/admin/<%= po.id %>/approve?key=<%= encodeURIComponent(query.key || '') %>">
+                  <button class="btn btn-sm btn-outline-success" <%= po.status === 'APPROVED' ? 'disabled' : '' %>>Approve</button>
+                </form>
+                <form method="POST" action="/admin/<%= po.id %>/reject?key=<%= encodeURIComponent(query.key || '') %>">
+                  <button class="btn btn-sm btn-outline-danger" <%= po.status === 'REJECTED' ? 'disabled' : '' %>>Reject</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      <% } %>
+    </tbody>
+  </table>
+</div>
