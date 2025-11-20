@@ -1,11 +1,121 @@
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
+  background: radial-gradient(circle at top, #2b2b40 0, #13131a 45%, #050509 100%);
+  color: #e6e6f0;
+  min-height: 100vh;
+}
+
+.navbar {
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.6);
+}
+
+.navbar-brand {
+  font-weight: 600;
+  letter-spacing: 0.04em;
 }
 
 .card {
-  border-radius: 0.5rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(
+    145deg,
+    rgba(22, 22, 35, 0.96),
+    rgba(10, 10, 18, 0.98)
+  );
+  backdrop-filter: blur(10px);
+  color: #f1f1ff;
+}
+
+.card .form-label,
+.card .form-text,
+.card p.text-muted,
+.card .text-muted {
+  color: #c3c3da !important;
+}
+
+.form-control,
+.form-select {
+  background-color: rgba(7, 7, 14, 0.9);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #f5f5ff;
+}
+
+.form-control::placeholder,
+.form-select::placeholder {
+  color: #7f7fa2;
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: rgba(10, 10, 18, 0.95);
+  border-color: #4c8dff;
+  box-shadow: 0 0 0 0.15rem rgba(76, 141, 255, 0.4);
+  color: #ffffff;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #4c8dff, #6f5bff);
+  border: none;
+  box-shadow: 0 0.4rem 1.1rem rgba(55, 125, 255, 0.5);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #366eff, #5940ff);
+}
+
+.btn-outline-light,
+.btn-outline-secondary,
+.btn-outline-success,
+.btn-outline-danger {
+  border-radius: 999px;
+}
+
+.badge.bg-warning.text-dark {
+  background-color: #ffc857 !important;
+  color: #222 !important;
+}
+
+.table {
+  color: #ececff;
+}
+
+.table thead tr {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.table tbody tr:hover {
+  background: rgba(76, 141, 255, 0.12);
 }
 
 code {
-  font-family: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.3rem;
+}
+
+/* Mobile tweaks */
+@media (max-width: 767.98px) {
+  .navbar-brand {
+    font-size: 0.95rem;
+  }
+
+  main.container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .card {
+    border-radius: 0.8rem;
+  }
+
+  .table-responsive {
+    font-size: 0.85rem;
+  }
 }
