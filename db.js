@@ -17,10 +17,29 @@ db.exec(`
     description TEXT NOT NULL,
     amount REAL NOT NULL,
     status TEXT NOT NULL DEFAULT 'PENDING',
+    jobNumber TEXT,
+    category TEXT,
+    attachmentPath TEXT,
+    attachmentOriginalName TEXT,
     createdAt TEXT NOT NULL,
     updatedAt TEXT NOT NULL
   )
 `);
+
+// If upgrading an existing DB, ensure new columns exist
+const pragma = db.prepare('PRAGMA table_info(po_requests)').all();
+const existingCols = pragma.map((c) => c.name);
+
+function ensureColumn(name, type) {
+  if (!existingCols.includes(name)) {
+    db.exec(`ALTER TABLE po_requests ADD COLUMN ${name} ${type}`);
+  }
+}
+
+ensureColumn('jobNumber', 'TEXT');
+ensureColumn('category', 'TEXT');
+ensureColumn('attachmentPath', 'TEXT');
+ensureColumn('attachmentOriginalName', 'TEXT');
 
 function generatePoNumber() {
   const today = new Date();
@@ -29,9 +48,9 @@ function generatePoNumber() {
   const dd = String(today.getDate()).padStart(2, '0');
   const datePart = `${yyyy}${mm}${dd}`;
 
-  const row = db.prepare(
-    "SELECT COUNT(*) as count FROM po_requests WHERE poNumber LIKE ?"
-  ).get(`ADL-${datePart}-%`);
+  const row = db
+    .prepare('SELECT COUNT(*) as count FROM po_requests WHERE poNumber LIKE ?')
+    .get(`ADL-${datePart}-%`);
 
   const seq = (row.count || 0) + 1;
   const seqPart = String(seq).padStart(3, '0');
@@ -52,9 +71,13 @@ function createPoRequest(data) {
       description,
       amount,
       status,
+      jobNumber,
+      category,
+      attachmentPath,
+      attachmentOriginalName,
       createdAt,
       updatedAt
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, 'PENDING', ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, 'PENDING', ?, ?, ?, ?, ?, ?)
   `);
 
   const info = stmt.run(
@@ -65,6 +88,10 @@ function createPoRequest(data) {
     data.vendorName,
     data.description,
     data.amount,
+    data.jobNumber || null,
+    data.category || null,
+    data.attachmentPath || null,
+    data.attachmentOriginalName || null,
     now,
     now
   );
@@ -73,28 +100,38 @@ function createPoRequest(data) {
 }
 
 function listPoRequests() {
-  return db.prepare(`
+  return db
+    .prepare(
+      `
     SELECT *
     FROM po_requests
     ORDER BY createdAt DESC
-  `).all();
+  `
+    )
+    .all();
 }
 
 function getPoById(id) {
-  return db.prepare(`
+  return db
+    .prepare(
+      `
     SELECT *
     FROM po_requests
     WHERE id = ?
-  `).get(id);
+  `
+    )
+    .get(id);
 }
 
 function updateStatus(id, status) {
   const now = new Date().toISOString();
-  db.prepare(`
+  db.prepare(
+    `
     UPDATE po_requests
     SET status = ?, updatedAt = ?
     WHERE id = ?
-  `).run(status, now, id);
+  `
+  ).run(status, now, id);
   return getPoById(id);
 }
 
