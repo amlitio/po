@@ -1,8 +1,7 @@
-<% layout('layout') %>
-
 <h1 class="h4 mb-3">Admin: PO Requests</h1>
 <p class="text-muted">
-  Use this page to review, approve, or reject PO requests. Share the approved PO number with AP and the vendor.
+  Use this page to review, approve, or reject PO requests. Share the approved PO
+  number with AP and the vendor.
 </p>
 
 <div class="table-responsive">
@@ -11,23 +10,24 @@
       <tr>
         <th>PO #</th>
         <th>Requested By</th>
-        <th>Division</th>
-        <th>Vendor</th>
+        <th>Division / Job</th>
+        <th>Vendor / Category</th>
         <th>Amount</th>
         <th>Status</th>
         <th>Created</th>
+        <th>Attachment</th>
         <th>Actions</th>
       </tr>
     </thead>
     <tbody>
       <% if (!requests || requests.length === 0) { %>
         <tr>
-          <td colspan="8" class="text-center text-muted">
+          <td colspan="9" class="text-center text-muted">
             No PO requests yet.
           </td>
         </tr>
       <% } else { %>
-        <% requests.forEach(function(po) { %>
+        <% requests.forEach(function (po) { %>
           <tr>
             <td><code><%= po.poNumber %></code></td>
             <td>
@@ -36,8 +36,18 @@
                 <div class="text-muted small"><%= po.requesterEmail %></div>
               <% } %>
             </td>
-            <td><%= po.division %></td>
-            <td><%= po.vendorName %></td>
+            <td>
+              <div><strong><%= po.division %></strong></div>
+              <div class="text-muted small">
+                Job: <%= po.jobNumber || 'N/A' %>
+              </div>
+            </td>
+            <td>
+              <div><%= po.vendorName %></div>
+              <div class="text-muted small">
+                Category: <%= po.category || 'N/A' %>
+              </div>
+            </td>
             <td><%= formatCurrency(po.amount) %></td>
             <td>
               <% if (po.status === 'APPROVED') { %>
@@ -50,17 +60,40 @@
             </td>
             <td class="small text-muted"><%= po.createdAt %></td>
             <td>
+              <% if (po.attachmentPath) { %>
+                <a
+                  href="<%= po.attachmentPath %>"
+                  target="_blank"
+                  class="btn btn-sm btn-outline-secondary"
+                >
+                  View
+                </a>
+              <% } else { %>
+                <span class="text-muted small">None</span>
+              <% } %>
+            </td>
+            <td>
               <div class="d-flex gap-1">
-                <form method="POST" action="/admin/<%= po.id %>/approve?key=<%= encodeURIComponent(query.key || '') %>">
-                  <button class="btn btn-sm btn-outline-success" <%= po.status === 'APPROVED' ? 'disabled' : '' %>>Approve</button>
+                <form method="POST" action="/admin/<%= po.id %>/approve">
+                  <button
+                    class="btn btn-sm btn-outline-success"
+                    <%= po.status === 'APPROVED' ? 'disabled' : '' %>
+                  >
+                    Approve
+                  </button>
                 </form>
-                <form method="POST" action="/admin/<%= po.id %>/reject?key=<%= encodeURIComponent(query.key || '') %>">
-                  <button class="btn btn-sm btn-outline-danger" <%= po.status === 'REJECTED' ? 'disabled' : '' %>>Reject</button>
+                <form method="POST" action="/admin/<%= po.id %>/reject">
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    <%= po.status === 'REJECTED' ? 'disabled' : '' %>
+                  >
+                    Reject
+                  </button>
                 </form>
               </div>
             </td>
           </tr>
-        <% }) %>
+        <% }); %>
       <% } %>
     </tbody>
   </table>
