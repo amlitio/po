@@ -1,0 +1,16 @@
+{
+  "name": "po-request-system",
+  "version": "1.0.0",
+  "description": "Simple PO (Purchase Order) request + approval system using Node.js, Express, EJS, and SQLite.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^9.0.0",
+    "body-parser": "^1.20.3",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.1"
+  }
+}
